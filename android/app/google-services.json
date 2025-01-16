@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "520494538502",
+    "project_id": "hifit-9f538",
+    "storage_bucket": "hifit-9f538.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:520494538502:android:00287ee9d0a4ae205e4887",
+        "android_client_info": {
+          "package_name": "com.example.hifit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHCrHfwEDMx1ZLePHtQsnWHdB49Jv1Fqc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
