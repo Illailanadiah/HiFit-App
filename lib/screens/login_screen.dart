@@ -19,23 +19,27 @@ class _LoginScreenState extends State<LoginScreen> {
 
   /// Method for logging in with email and password
   Future<void> login(String email, String password) async {
-    if (email == "" && password == "") {
-      return UiHelper.CustomAlertBox(context, "Enter Required Fields");
-    } else {
-      try {
-        await FirebaseAuth.instance
-            .signInWithEmailAndPassword(email: email, password: password)
-            .then((value) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
-          );
-        });
-      } on FirebaseAuthException catch (ex) {
-        return UiHelper.CustomAlertBox(context, ex.code.toString());
-      }
-    }
+  if (email.isEmpty || password.isEmpty) {
+    UiHelper.CustomAlertBox(context, "Enter Required Fields");
+    return;
   }
+
+  try {
+    UserCredential userCredential = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password);
+    
+    if (userCredential.user != null) {
+      debugPrint("Login successful: Navigating to HomeScreen");
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    }
+  } on FirebaseAuthException catch (ex) {
+    UiHelper.CustomAlertBox(context, ex.message ?? "Login error occurred.");
+  }
+}
+
 
   /// Method for fingerprint authentication
   Future<void> authenticateWithFingerprint() async {

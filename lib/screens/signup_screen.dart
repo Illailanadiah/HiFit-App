@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hifit/screens/home_screen.dart';
 import 'package:hifit/components/uihelper.dart';
+import 'package:hifit/screens/profile_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -12,64 +12,57 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  TextEditingController nameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController ageController = TextEditingController();
-  TextEditingController heightController = TextEditingController();
-  TextEditingController weightController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController ageController = TextEditingController();
+  final TextEditingController heightController = TextEditingController();
+  final TextEditingController weightController = TextEditingController();
   String gender = '';
 
-  double calculateBMI(int height, int weight) {
-    final heightInMeters = height / 100.0;
-    final bmi = weight / (heightInMeters * heightInMeters);
-    return bmi;
-  }
+  Future<void> signUp() async {
+    if (emailController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        nameController.text.isEmpty ||
+        ageController.text.isEmpty ||
+        gender.isEmpty ||
+        heightController.text.isEmpty ||
+        weightController.text.isEmpty) {
+      UiHelper.CustomAlertBox(context, "Please fill in all required fields");
+      return;
+    }
 
-  signUp() async {
-    if (emailController.text == "" ||
-        passwordController.text == "" ||
-        nameController.text == "" ||
-        ageController.text == "" ||
-        gender == "" ||
-        heightController.text == "" ||
-        weightController.text == "") {
-      UiHelper.CustomAlertBox(context, "Enter all required fields");
-    } else {
-      try {
-        UserCredential userCredential =
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
-        );
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
 
-        // Calculate BMI
-        double bmi = calculateBMI(
-          int.parse(heightController.text),
-          int.parse(weightController.text),
-        );
+      // Store user information in Firestore
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userCredential.user!.uid)
+          .set({
+        'name': nameController.text.trim(),
+        'email': emailController.text.trim(),
+        'age': int.parse(ageController.text),
+        'gender': gender,
+        'height': int.parse(heightController.text),
+        'weight': int.parse(weightController.text),
+        'uid': userCredential.user!.uid,
+      });
 
-        // Store user information in Firestore with BMI
-        FirebaseFirestore.instance
-            .collection('Users')
-            .doc(userCredential.user!.uid)
-            .set({
-          'name': nameController.text,
-          'email': emailController.text,
-          'age': int.parse(ageController.text),
-          'gender': gender,
-          'height': int.parse(heightController.text),
-          'weight': int.parse(weightController.text),
-          'bmi': bmi,
-        });
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
-        );
-      } on FirebaseAuthException catch (ex) {
-        return UiHelper.CustomAlertBox(context, ex.code.toString());
-      }
+      // Navigate to ProfilePage
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ProfilePage(userId: userCredential.user!.uid)),
+      );
+    } on FirebaseAuthException catch (ex) {
+      UiHelper.CustomAlertBox(context, ex.message ?? "An error occurred");
+    } catch (e) {
+      UiHelper.CustomAlertBox(context, "Error: $e");
     }
   }
 
@@ -77,117 +70,95 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Sign Up Page"),
+        title: const Text("Sign Up"),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              UiHelper.CustomTextField(
+                nameController,
+                "Name",
+                Icons.person,
+                false,
+                TextInputType.text,
+                false,
+              ),
+              UiHelper.CustomTextField(
+                emailController,
+                "Email",
+                Icons.mail,
+                false,
+                TextInputType.emailAddress,
+                false,
+              ),
+              UiHelper.CustomTextField(
+                passwordController,
+                "Password",
+                Icons.lock,
+                true,
+                TextInputType.text,
+                true,
+              ),
+              UiHelper.CustomTextField(
+                ageController,
+                "Age",
+                Icons.date_range,
+                false,
+                TextInputType.number,
+                false,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.person),
-                  SizedBox(width: 10),
-                  Text(
-                    "Hello, ${nameController.text}",
-                    style: TextStyle(fontSize: 18),
+                  Radio(
+                    value: 'Male',
+                    groupValue: gender,
+                    onChanged: (value) {
+                      setState(() {
+                        gender = value.toString();
+                      });
+                    },
                   ),
+                  const Text('Male'),
+                  Radio(
+                    value: 'Female',
+                    groupValue: gender,
+                    onChanged: (value) {
+                      setState(() {
+                        gender = value.toString();
+                      });
+                    },
+                  ),
+                  const Text('Female'),
                 ],
               ),
-            ),
-            UiHelper.CustomTextField(
-              nameController,
-              "Name",
-              Icons.person,
-              false,
-              TextInputType.text,
-              false,
-            ),
-            UiHelper.CustomTextField(
-              emailController,
-              "Email",
-              Icons.mail,
-              false,
-              TextInputType.emailAddress,
-              false,
-            ),
-            UiHelper.CustomTextField(
-              passwordController,
-              "Password",
-              Icons.password,
-              true,
-              TextInputType.text,
-              true,
-            ),
-            UiHelper.CustomTextField(
-              ageController,
-              "Age",
-              Icons.date_range,
-              false,
-              TextInputType.number,
-              false,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Radio(
-                  value: 'Male',
-                  groupValue: gender,
-                  onChanged: (value) {
-                    setState(() {
-                      gender = value.toString();
-                    });
-                  },
-                ),
-                Text('Male'),
-                Radio(
-                  value: 'Female',
-                  groupValue: gender,
-                  onChanged: (value) {
-                    setState(() {
-                      gender = value.toString();
-                    });
-                  },
-                ),
-                Text('Female'),
-                Radio(
-                  value: 'Transgender',
-                  groupValue: gender,
-                  onChanged: (value) {
-                    setState(() {
-                      gender = value.toString();
-                    });
-                  },
-                ),
-                Text('Transgender'),
-              ],
-            ),
-            UiHelper.CustomTextField(
-              heightController,
-              "Height (cm)",
-              Icons.height,
-              false,
-              TextInputType.number,
-              false,
-            ),
-            UiHelper.CustomTextField(
-              weightController,
-              "Weight (kg)",
-              Icons.line_weight,
-              false,
-              TextInputType.number,
-              false,
-            ),
-            SizedBox(height: 30),
-            UiHelper.CustomButton(
-                  () {
-                signUp();
-              },
-              "Sign Up",
-            ),
-          ],
+              UiHelper.CustomTextField(
+                heightController,
+                "Height (cm)",
+                Icons.height,
+                false,
+                TextInputType.number,
+                false,
+              ),
+              UiHelper.CustomTextField(
+                weightController,
+                "Weight (kg)",
+                Icons.line_weight,
+                false,
+                TextInputType.number,
+                false,
+              ),
+              const SizedBox(height: 30),
+              UiHelper.CustomButton(
+                signUp,
+                "Sign Up",
+              ),
+            ],
+          ),
         ),
       ),
     );
