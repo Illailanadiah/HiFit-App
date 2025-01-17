@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:hifit/screens/onboarding_screen.dart';
+import 'package:hifit/screens/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,16 +10,16 @@ void main() async {
   } catch (e) {
     print("Error initializing Firebase: $e");
   }
-  runApp( HiFitApp());
+  runApp(HiFitApp());
 }
 
 class HiFitApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'HiFit',
-      home: OnboardingScreen(),
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'HiFit',
+        home: LoginScreen(),
+        );
   }
 }

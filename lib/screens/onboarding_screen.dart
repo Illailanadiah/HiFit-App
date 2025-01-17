@@ -81,7 +81,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 style: TextStyle(fontSize: 18, color: Colors.white70),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 30),
+              SizedBox(height: 50),
               ElevatedButton(
                 onPressed: () {
                   navigateToAuthentication(context);
@@ -89,7 +89,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(5), 
+    
                   ),
                 ),
                 child: Text(
