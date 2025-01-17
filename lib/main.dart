@@ -4,8 +4,13 @@ import 'package:hifit/screens/onboarding_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(HiFitApp());
+  try {
+    await Firebase.initializeApp();
+    print("Firebase initialized successfully.");
+  } catch (e) {
+    print("Error initializing Firebase: $e");
+  }
+  runApp( HiFitApp());
 }
 
 class HiFitApp extends StatelessWidget {
