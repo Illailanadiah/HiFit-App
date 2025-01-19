@@ -12,7 +12,20 @@
           "package_name": "com.example.hifit"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "520494538502-tooan40u35c0d5kjvoasul9jpceeo8rb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.hifit",
+            "certificate_hash": "e56072bdfa01de182f116c3c70d8cc14d16e1d54"
+          }
+        },
+        {
+          "client_id": "520494538502-p4odl9k1rcr9tdl6jgelud5lkt5g7c2b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDHCrHfwEDMx1ZLePHtQsnWHdB49Jv1Fqc"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "520494538502-p4odl9k1rcr9tdl6jgelud5lkt5g7c2b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

@@ -4,12 +4,7 @@ import 'package:hifit/screens/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  try {
-    await Firebase.initializeApp();
-    print("Firebase initialized successfully.");
-  } catch (e) {
-    print("Error initializing Firebase: $e");
-  }
+  await Firebase.initializeApp(); // Initialize Firebase
   runApp(HiFitApp());
 }
 
@@ -19,7 +14,10 @@ class HiFitApp extends StatelessWidget {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'HiFit',
-        home: LoginScreen(),
+        home: LoginPage(authenticateWithBiometrics: () async {
+        // Provide a valid implementation for biometrics
+        return false; // Default return in case biometrics are not configured 
+        },),
         );
   }
 }
