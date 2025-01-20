@@ -132,10 +132,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void navigateToAuthentication(BuildContext context) {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => LoginPage(authenticateWithBiometrics: () async {
-        // Provide a valid implementation for biometrics
-        return false; // Default return in case biometrics are not configured 
-        },),
+      MaterialPageRoute(builder: (context) => LoginScreen()
       ),
     );
   }

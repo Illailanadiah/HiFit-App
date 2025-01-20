@@ -19,7 +19,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
       () {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => HomeScreen()),
           (Route<dynamic> route) => false,
         );
       },
