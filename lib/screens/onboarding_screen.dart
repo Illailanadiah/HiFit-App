@@ -132,7 +132,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void navigateToAuthentication(BuildContext context) {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => LoginScreen()
+      MaterialPageRoute(builder: (context) => BiometricLoginScreen()
       ),
     );
   }

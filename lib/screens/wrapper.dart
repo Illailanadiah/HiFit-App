@@ -20,7 +20,7 @@ class _WrapperState extends State<Wrapper> {
             if (snapshot.hasData) {
               return HomeScreen();
             } else {
-              return LoginScreen();
+              return BiometricLoginScreen();
             }
           }),
     );
