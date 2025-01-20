@@ -15,7 +15,7 @@ class HiFitApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'HiFit',
-      home: MedicationsScreen(),
+      home: MedicationScreen(),
     );
   }
 }
