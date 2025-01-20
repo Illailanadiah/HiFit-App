@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 
-// Primary Color Palette
-class AppColors {
-  static const Color primaryLightBlue = Color(0xFFADD8E6);
-  static const Color darkBlue = Color.fromARGB(0, 45, 45, 122); // Light Blue
-  static const Color lightGreen = Color.fromARGB(255, 120, 170, 120); // Green
-  static const Color highlightOrange = Color(0xFFFFA500); // Orange
-  static const Color backgroundWhite = Color(0xFFFFFFFF); // White
-  static const Color neutralGray = Color(0xFFD3D3D3); // Soft Gray
-}
+
+/* -- LIST OF ALL COLORS -- */
+
+const tPrimaryColor = Color(0xFFFFE400);
+const tSecondaryColor = Color(0xFF272727);
+const tAccentColor = Color(0xFF001BFF);
+
+const tWhiteColor = Colors.white;
+const tDarkColor = Color(0xff000000);
+const tCardBgColor = Color(0xFFF7F6F1);
+
+
+
+// -- ON-BOARDING COLORS
+const tOnBoardingPage1Color = Colors.white;
+const tOnBoardingPage2Color = Color(0xfffddcdf);
+const tOnBoardingPage3Color = Color(0xffffdcbd);

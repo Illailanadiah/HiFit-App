@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hifit/medications/add_medication.dart';
+import 'package:hifit/medications/medication_detail.dart';
 
 class MedicationsScreen extends StatelessWidget {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,55 +22,91 @@ class MedicationsScreen extends StatelessWidget {
             ),
             SizedBox(height: 16),
             Expanded(
-              child: ListView.builder(
-                itemCount: 5, // Replace with dynamic count
-                itemBuilder: (context, index) {
-                  return Slidable(
-                    key: ValueKey(index),
-                    startActionPane: ActionPane(
-                      motion: DrawerMotion(),
-                      children: [
-                        SlidableAction(
-                          onPressed: (context) {
-                            // Add edit logic here
-                          },
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          icon: Icons.edit,
-                          label: 'Edit',
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _firestore.collection('medications').snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Center(child: Text('No medications found.'));
+                  }
+
+                  final medications = snapshot.data!.docs;
+
+                  return ListView.builder(
+                    itemCount: medications.length,
+                    itemBuilder: (context, index) {
+                      final medication = medications[index];
+                      return Slidable(
+                        key: ValueKey(medication.id),
+                        startActionPane: ActionPane(
+                          motion: DrawerMotion(),
+                          children: [
+                            SlidableAction(
+                              onPressed: (context) {
+                                // Navigate to AddMedicineScreen for editing
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddMedicineScreen(
+                                      medicationId: medication.id,
+                                    ),
+                                  ),
+                                );
+                              },
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white,
+                              icon: Icons.edit,
+                              label: 'Edit',
+                            ),
+                          ],
                         ),
-                        SlidableAction(
-                          onPressed: (context) {
-                            // Add set reminder logic here
-                          },
-                          backgroundColor: Colors.orange,
-                          foregroundColor: Colors.white,
-                          icon: Icons.notifications_active,
-                          label: 'Set Reminder',
+                        endActionPane: ActionPane(
+                          motion: DrawerMotion(),
+                          children: [
+                            SlidableAction(
+                              onPressed: (context) async {
+                                // Delete medication from Firestore
+                                await _firestore
+                                    .collection('medications')
+                                    .doc(medication.id)
+                                    .delete();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        '${medication['name']} deleted successfully.'),
+                                  ),
+                                );
+                              },
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
+                              icon: Icons.delete,
+                              label: 'Delete',
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    endActionPane: ActionPane(
-                      motion: DrawerMotion(),
-                      children: [
-                        SlidableAction(
-                          onPressed: (context) {
-                            // Add delete logic here
-                          },
-                          backgroundColor: Colors.red,
-                          foregroundColor: Colors.white,
-                          icon: Icons.delete,
-                          label: 'Delete',
+                        child: Card(
+                          elevation: 4,
+                          child: ListTile(
+                            title: Text(medication['name']),
+                            subtitle: Text(
+                                'Dosage: ${medication['dosage']}\nInterval: ${medication['interval']} hours'),
+                            onTap: () {
+                              // Navigate to MedicationDetailsScreen
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MedicationDetailsScreen(
+                                    medicationId: medication.id,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         ),
-                      ],
-                    ),
-                    child: Card(
-                      elevation: 4,
-                      child: ListTile(
-                        title: Text('Medication ${index + 1}'),
-                        subtitle: Text('Details for Medication ${index + 1}'),
-                      ),
-                    ),
+                      );
+                    },
                   );
                 },
               ),
@@ -77,66 +118,11 @@ class MedicationsScreen extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => SetReminderScreen()),
+            MaterialPageRoute(builder: (context) => AddMedicineScreen()),
           );
         },
-        child: Icon(Icons.notifications_active),
+        child: Icon(Icons.add),
         backgroundColor: Colors.orange,
-      ),
-    );
-  }
-}
-
-class SetReminderScreen extends StatelessWidget {
-  final TextEditingController medicationController = TextEditingController();
-  final TextEditingController timeController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Set Reminder')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: medicationController,
-              decoration: InputDecoration(
-                labelText: 'Select Medication',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              controller: timeController,
-              decoration: InputDecoration(
-                labelText: 'Set Time',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.access_time),
-              ),
-              onTap: () {
-                // Show time picker
-                showTimePicker(
-                  context: context,
-                  initialTime: TimeOfDay.now(),
-                ).then((selectedTime) {
-                  if (selectedTime != null) {
-                    timeController.text = selectedTime.format(context);
-                  }
-                });
-              },
-            ),
-            SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                // Save reminder logic here
-                Navigator.pop(context);
-              },
-              child: Text('Save Reminder'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-            ),
-          ],
-        ),
       ),
     );
   }
