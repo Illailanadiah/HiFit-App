@@ -29,7 +29,8 @@ class FitnessRecommendationScreen extends StatelessWidget {
   };
 
   /// Generate fitness recommendation based on medication and mood data
-  String generateRecommendation(Map<String, dynamic> medication, Map<String, dynamic>? moodLog) {
+  String generateRecommendation(
+      Map<String, dynamic> medication, Map<String, dynamic>? moodLog) {
     final String type = medication['type'];
     final int interval = medication['interval'];
     final String mood = moodLog?['mood'] ?? 'Neutral';
@@ -58,11 +59,33 @@ class FitnessRecommendationScreen extends StatelessWidget {
     return moodLogs.isNotEmpty ? moodLogs.first : null;
   }
 
-  Future<void> openLink(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
+  Future<void> openLink(BuildContext context, String url) async {
+    try {
+      final Uri uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication, // Ensures it opens in the external browser
+        );
+      } else {
+        throw 'Could not launch $url';
+      }
+    } catch (e) {
+      print('Error launching URL: $e');
+      // Show an error dialog to the user
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Error'),
+          content: Text('Unable to open the link: $url'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
   }
 
@@ -102,7 +125,8 @@ class FitnessRecommendationScreen extends StatelessWidget {
                   final recommendation = generateRecommendation(med, moodLog);
 
                   return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 16.0),
                     elevation: 4,
                     child: ExpansionTile(
                       title: Text(
@@ -114,7 +138,8 @@ class FitnessRecommendationScreen extends StatelessWidget {
                       ),
                       subtitle: Text(
                         recommendation,
-                        style: const TextStyle(fontSize: 16, color: Color(0xFF7D7D7D)),
+                        style: const TextStyle(
+                            fontSize: 16, color: Color(0xFF7D7D7D)),
                       ),
                       children: [
                         if (fitnessSteps.containsKey(recommendation)) ...[
@@ -141,7 +166,7 @@ class FitnessRecommendationScreen extends StatelessWidget {
                         ElevatedButton.icon(
                           onPressed: () {
                             if (fitnessLinks.containsKey(recommendation)) {
-                              openLink(fitnessLinks[recommendation]!);
+                              openLink(context, fitnessLinks[recommendation]!);
                             } else {
                               showDialog(
                                 context: context,

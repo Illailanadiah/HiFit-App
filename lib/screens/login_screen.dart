@@ -35,7 +35,7 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
-          color: Color.fromRGBO(181, 176, 179, 1), // Background color
+          color: Colors.white, // Background color
         ),
         child: Center(
           child: Column(
@@ -45,9 +45,8 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(height: 20),
               Lottie.asset(
                 'assets/animation/fingerprint.json',
-                height: 200,
+                height: 150,
               ),
-              const SizedBox(height: 20),
               _buildLoginButton(context),
             ],
           ),
@@ -65,7 +64,7 @@ class LoginScreen extends StatelessWidget {
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 color: Color(0xFF21565C),
                 fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontSize: 30,
               ),
         ),
         Text(
@@ -73,9 +72,13 @@ class LoginScreen extends StatelessWidget {
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 color: Color(0xFF21565C),
                 fontWeight: FontWeight.bold,
-                fontSize: 35,
+                fontSize: 45,
               ),
         ),
+        Lottie.asset(
+                'assets/animation/fitness.json',
+                height: 300,
+              ),
       ],
     );
   }

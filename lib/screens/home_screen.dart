@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hifit/fitness/fitness_screen.dart';
 import 'package:hifit/mood/moodtracker_screen.dart';
 import 'package:hifit/screens/setting_screen.dart';
 import 'package:hifit/helper/database_helper.dart';
@@ -267,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => MoodTrackerScreen()),
+                            builder: (context) => FitnessRecommendationScreen()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -278,7 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     child: const Text(
-                      'Mood Tracker',
+                      'Fitness Recommendations',
                       style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),

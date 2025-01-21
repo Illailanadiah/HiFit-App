@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hifit/fitness/fitness_screen.dart';
+import 'package:hifit/mood/moodtracker_screen.dart';
 import 'package:hifit/screens/home_screen.dart';
 import 'package:hifit/screens/setting_screen.dart';
 
@@ -13,7 +13,7 @@ class _BottomNavBarAppState extends State<BottomNavBarApp> {
 
   final List<Widget> _screens = [
     HomeScreen(), // Dashboard screen
-    FitnessRecommendationScreen(), // Mood Tracker screen
+    MoodTrackerScreen(), // Fitness Recommendation screen
     SettingsScreen(), // Settings screen
   ];
 
@@ -48,8 +48,8 @@ class _BottomNavBarAppState extends State<BottomNavBarApp> {
             label: "Dashboard",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.fitness_center),
-            label: "fitness",
+            icon: Icon(Icons.mood),
+            label: "Mood Tracker",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
