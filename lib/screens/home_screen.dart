@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hifit/mood/moodtracker_screen.dart';
 import 'package:hifit/screens/setting_screen.dart';
 import 'package:hifit/helper/database_helper.dart';
+import 'package:hifit/helper/notification_helper.dart';
 import 'package:hifit/medications/add_medication.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -52,6 +53,27 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future<void> _scheduleMedicationNotification(Map<String, dynamic> med) async {
+    final int id = med['id'];
+    final String name = med['name'];
+    final DateTime scheduledTime = DateTime.parse(med['time']); // Ensure time is in correct format
+
+    await NotificationHelper.scheduleNotification(
+      id,
+      'Time to Take Your Medicine',
+      'Don\'t forget to take $name!',
+      scheduledTime,
+    );
+  }
+
+  Future<void> _dashboardNotification(String title, String message) async {
+    await NotificationHelper.showInstantNotification(
+      0,
+      title,
+      message,
+    );
+  }
+
   Widget _dashboardContent() {
     return RefreshIndicator(
       onRefresh: _fetchData,
@@ -60,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Mood Logs
+            // Mood Logs Section
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
@@ -91,7 +113,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       return Card(
                         elevation: 4,
                         margin: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 16.0),
+                          vertical: 8.0,
+                          horizontal: 16.0,
+                        ),
                         child: ListTile(
                           title: Text(
                             'Mood: ${log['mood']}',
@@ -114,6 +138,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               await DatabaseHelper.instance
                                   .deleteMoodLog(log['id']);
                               await _fetchMoodLogs();
+                              await _dashboardNotification(
+                                'Mood Log Deleted',
+                                'You removed a mood log entry.',
+                              );
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Mood log deleted'),
@@ -127,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
             const Divider(),
 
-            // Medications
+            // Medications Section
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
@@ -158,7 +186,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       return Card(
                         elevation: 4,
                         margin: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 16.0),
+                          vertical: 8.0,
+                          horizontal: 16.0,
+                        ),
                         child: ListTile(
                           title: Text(
                             med['name'],
@@ -181,6 +211,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               await DatabaseHelper.instance
                                   .deleteMedication(med['id']);
                               await _fetchMedications();
+                              await _dashboardNotification(
+                                'Medication Deleted',
+                                'You removed ${med['name']} from your medications.',
+                              );
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Medication deleted'),
@@ -194,22 +228,34 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
             const Divider(),
 
-            // Action Buttons
+            // Action Buttons Section
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ElevatedButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AddMedicationScreen()),
-                    ).then((_) => _fetchMedications()),
+                    onPressed: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AddMedicationScreen()),
+                      );
+                      if (result != null) {
+                        await _fetchMedications();
+                        await _scheduleMedicationNotification(result);
+                        await _dashboardNotification(
+                          'New Medication Added',
+                          '${result['name']} has been added to your list.',
+                        );
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFCE5100), // Orange
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 16),
+                        horizontal: 20,
+                        vertical: 16,
+                      ),
                     ),
                     child: const Text(
                       'Add Medication',
@@ -217,18 +263,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => MoodTrackerScreen()),
-                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MoodTrackerScreen()),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF21565C), // Deep Blue
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 16),
+                        horizontal: 20,
+                        vertical: 16,
+                      ),
                     ),
                     child: const Text(
-                      'Mode Tracker',
+                      'Mood Tracker',
                       style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),
@@ -263,8 +313,8 @@ class _HomeScreenState extends State<HomeScreen> {
             label: "Dashboard",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.fitness_center),
-            label: "Fitness",
+            icon: Icon(Icons.mood),
+            label: "Mood Tracker",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),

@@ -8,7 +8,7 @@ class SettingsScreen extends StatelessWidget {
     await prefs.clear(); // Clear all stored preferences
 
     // Navigate to login screen
-    Navigator.pushReplacementNamed(context, '/login');
+    Navigator.pushReplacementNamed(context, '/');
   }
 
   @override
