@@ -38,7 +38,12 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        
+        <meta-data
+    android:name="com.google.android.gms.analytics.globalConfigResource"
+    android:resource="@xml/global_tracker" />
+    <meta-data
+    android:name="com.google.firebase.auth.api_key"
+    android:value="AIzaSyDHCrHfwEDMx1ZLePHtQsnWHdB49Jv1Fqc" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
@@ -52,7 +57,5 @@
         </intent>
     </queries>
 
-<meta-data
-    android:name="com.google.android.gms.analytics.globalConfigResource"
-    android:resource="@xml/global_tracker" />
+
 </manifest>

@@ -24,6 +24,7 @@ class _BiometricLoginScreenState extends State<BiometricLoginScreen> {
       );
 
       if (isAuthenticated) {
+        // ignore: use_build_context_synchronously
         Navigator.pushReplacementNamed(context, '/home');
       }
     } catch (e) {
