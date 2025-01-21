@@ -57,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return RefreshIndicator(
       onRefresh: _fetchData,
       child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -107,6 +108,19 @@ class _HomeScreenState extends State<HomeScreen> {
                               fontSize: 16,
                               color: Color(0xFF7D7D7D), // Grey text
                             ),
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () async {
+                              await DatabaseHelper.instance
+                                  .deleteMoodLog(log['id']);
+                              await _fetchMoodLogs();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Mood log deleted'),
+                                ),
+                              );
+                            },
                           ),
                         ),
                       );
@@ -167,7 +181,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             onPressed: () async {
                               await DatabaseHelper.instance
                                   .deleteMedication(med['id']);
-                              _fetchMedications();
+                              await _fetchMedications();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Medication deleted'),
+                                ),
+                              );
                             },
                           ),
                         ),

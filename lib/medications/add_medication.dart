@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hifit/helper/database_helper.dart';
 import 'package:hifit/screens/success_screen.dart';
+import 'package:hifit/helper/notification_helper.dart';
 
 class AddMedicationScreen extends StatefulWidget {
   @override
@@ -26,13 +27,22 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
     }
 
     final db = DatabaseHelper.instance;
-    await db.addMedication({
+    final int id = await db.addMedication({
       'name': nameController.text.trim(),
       'dosage': dosageController.text.trim(),
       'type': selectedType,
       'interval': int.tryParse(intervalController.text.trim()) ?? 24,
       'time': selectedTime!.format(context),
     });
+
+    // Schedule the initial notification
+    await NotificationHelper.scheduleNotification(
+      id,
+      'Time to Take Your Medicine',
+      'It\'s time to take ${nameController.text.trim()}!',
+      DateTime.now().add(Duration(
+          hours: int.tryParse(intervalController.text.trim()) ?? 24)),
+    );
 
     // Navigate to Success Screen
     Navigator.pushReplacement(
@@ -53,6 +63,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

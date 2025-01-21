@@ -63,18 +63,17 @@ class LoginScreen extends StatelessWidget {
         Text(
           'Welcome to',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: Colors.white,
+                color: Color(0xFF21565C),
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
               ),
         ),
-        const SizedBox(height: 10),
         Text(
           'HiFit',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: Colors.white,
+                color: Color(0xFF21565C),
                 fontWeight: FontWeight.bold,
-                fontSize: 28,
+                fontSize: 35,
               ),
         ),
       ],

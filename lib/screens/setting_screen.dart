@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends StatelessWidget {
+  Future<void> _logout(BuildContext context) async {
+    // Clear user session or authentication details
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Clear all stored preferences
+
+    // Navigate to login screen
+    Navigator.pushReplacementNamed(context, '/login');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +34,6 @@ class SettingsScreen extends StatelessWidget {
             title: const Text('Theme'),
             subtitle: const Text('Change app theme'),
             onTap: () {
-              // Navigate to Theme settings or toggle functionality
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
@@ -57,7 +66,6 @@ class SettingsScreen extends StatelessWidget {
             title: const Text('Notifications'),
             subtitle: const Text('Manage notification settings'),
             onTap: () {
-              // Implement notification settings
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                     content: Text('Notification settings coming soon!')),
@@ -70,7 +78,6 @@ class SettingsScreen extends StatelessWidget {
             title: const Text('Privacy'),
             subtitle: const Text('Privacy and security options'),
             onTap: () {
-              // Navigate to Privacy settings
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Privacy settings coming soon!')),
               );
@@ -102,7 +109,6 @@ class SettingsScreen extends StatelessWidget {
                 const Icon(Icons.logout, color: Color(0xFFB5B0B3)), // Silver
             title: const Text('Logout'),
             onTap: () {
-              // Implement logout functionality
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
@@ -116,9 +122,9 @@ class SettingsScreen extends StatelessWidget {
                       child: const Text('Cancel'),
                     ),
                     TextButton(
-                      onPressed: () {
-                        // Navigate to login screen
-                        Navigator.pushReplacementNamed(context, '/login');
+                      onPressed: () async {
+                        Navigator.pop(context); // Close the dialog
+                        await _logout(context); // Call logout logic
                       },
                       child: const Text('Logout'),
                     ),

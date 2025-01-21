@@ -107,6 +107,12 @@ class DatabaseHelper {
     return await db.query('medications', orderBy: 'time ASC');
   }
 
+  /// Delete a medication by ID
+  Future<int> deleteMedication(int id) async {
+    final db = await instance.database;
+    return await db.delete('medications', where: 'id = ?', whereArgs: [id]);
+  }
+
   /// Add a new mood log
   Future<int> addMoodLog(Map<String, dynamic> moodData) async {
     final db = await instance.database;
@@ -117,6 +123,12 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> fetchMoodLogs() async {
     final db = await instance.database;
     return await db.query('moodLogs', orderBy: 'timestamp DESC');
+  }
+
+  /// Delete a mood log by ID
+  Future<int> deleteMoodLog(int id) async {
+    final db = await instance.database;
+    return await db.delete('moodLogs', where: 'id = ?', whereArgs: [id]);
   }
 
   /// Add a new notification
@@ -140,12 +152,6 @@ class DatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-  }
-
-  /// Delete a medication by ID
-  Future<int> deleteMedication(int id) async {
-    final db = await instance.database;
-    return await db.delete('medications', where: 'id = ?', whereArgs: [id]);
   }
 
   /// Clear a specific table
