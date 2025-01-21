@@ -1,30 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:lottie/lottie.dart';
 
-class BiometricLoginScreen extends StatefulWidget {
-  @override
-  _BiometricLoginScreenState createState() => _BiometricLoginScreenState();
-}
+class LoginScreen extends StatelessWidget {
+  final LocalAuthentication _auth = LocalAuthentication();
 
-class _BiometricLoginScreenState extends State<BiometricLoginScreen> {
-  final LocalAuthentication auth = LocalAuthentication();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
-  bool _isAuthenticating = false;
-
-  /// Authenticate with biometrics
-  Future<void> _authenticate() async {
+  Future<void> _authenticate(BuildContext context) async {
     try {
-      final isAuthenticated = await auth.authenticate(
+      final isAuthenticated = await _auth.authenticate(
         localizedReason: 'Log in to HiFit using biometrics',
         options: const AuthenticationOptions(biometricOnly: true),
       );
 
       if (isAuthenticated) {
-        // ignore: use_build_context_synchronously
         Navigator.pushReplacementNamed(context, '/home');
       }
     } catch (e) {
@@ -34,82 +22,44 @@ class _BiometricLoginScreenState extends State<BiometricLoginScreen> {
     }
   }
 
-  /// Authenticate with email and password
-  Future<void> _loginWithEmailAndPassword() async {
-    final email = emailController.text.trim();
-    final password = passwordController.text.trim();
-
-    if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all fields')),
-      );
-      return;
-    }
-
-    setState(() {
-      _isAuthenticating = true;
-    });
-
-    try {
-      await _firebaseAuth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      Navigator.pushReplacementNamed(context, '/home');
-    } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login failed: ${e.message}')),
-      );
-    } finally {
-      setState(() {
-        _isAuthenticating = false;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: _authenticate,
-              child: Text('Login with Biometrics'),
-            ),
-            Divider(),
-            Text('OR', style: TextStyle(fontSize: 16)),
-            SizedBox(height: 16),
-            TextField(
-              controller: emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
+      body: Container(
+        color: const Color.fromRGBO(181, 176, 179, 1),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Welcome to',
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
               ),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 20),
+              Text(
+                'HiFit',
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 28,
+                    ),
               ),
-            ),
-            SizedBox(height: 16),
-            _isAuthenticating
-                ? CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: _loginWithEmailAndPassword,
-                    child: Text('Login with Email & Password'),
-                  ),
-          ],
+              const SizedBox(height: 20),
+              Lottie.asset('assets/animation/fingerprint.json', height: 200),
+              ElevatedButton.icon(
+                onPressed: () => _authenticate(context),
+                icon: const Icon(Icons.fingerprint, color: Color(0xFF21565C)),
+                label: const Text(
+                  "Login using Fingerprint",
+                  style: TextStyle(color: Color(0xFF21565C)),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
     );
   }
 }

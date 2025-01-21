@@ -1,46 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/percent_indicator.dart';
+import 'package:hifit/helper/database_helper.dart';
 
-class FitnessScreen extends StatelessWidget {
+class FitnessRecommendationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Fitness Routines')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Your Fitness Routines',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-            Expanded(
-              child: ListView.builder(
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  return Card(
-                    elevation: 4,
-                    child: ListTile(
-                      title: Text('Routine ${index + 1}'),
-                      subtitle: LinearPercentIndicator(
-                        lineHeight: 14.0,
-                        percent: 0.5,
-                        backgroundColor: Colors.grey[300],
-                        progressColor: Colors.green,
-                      ),
-                      trailing: Icon(Icons.edit, color: Colors.blue),
-                      onTap: () {
-                        // Edit routine logic
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+      appBar: AppBar(title: Text('Fitness Recommendation')),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: DatabaseHelper.instance.fetchMedications(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No medications to base recommendations on.'));
+          }
+
+          final medications = snapshot.data!;
+          return ListView.builder(
+            itemCount: medications.length,
+            itemBuilder: (context, index) {
+              final med = medications[index];
+              return ListTile(
+                title: Text('Workout Plan for ${med['name']}'),
+                subtitle: Text('Suggested: Light Yoga or Walking'),
+              );
+            },
+          );
+        },
       ),
     );
   }
