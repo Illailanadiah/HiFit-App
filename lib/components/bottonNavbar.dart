@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hifit/calendar/calendar_screen.dart';
 import 'package:hifit/mood/moodtracker_screen.dart';
-import 'package:hifit/screens/dashboard_screen.dart';
+import 'package:hifit/screens/home_screen.dart';
 import 'package:hifit/screens/setting_screen.dart';
-
 
 class BottomNavBarApp extends StatefulWidget {
   @override
@@ -14,15 +12,13 @@ class _BottomNavBarAppState extends State<BottomNavBarApp> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    DashboardScreen(), // Replace with your dashboard screen
-    CalendarScreen(), // Replace with your calendar screen
-    MoodTrackerScreen(), // Replace with your mood tracker screen
-    SettingsScreen(), // Replace with your settings screen
+    HomeScreen(), // Dashboard screen
+    MoodTrackerScreen(), // Mood Tracker screen
+    SettingsScreen(), // Settings screen
   ];
 
   final List<String> _titles = [
     "Dashboard",
-    "Calendar",
     "Mood Tracker",
     "Settings",
   ];
@@ -32,9 +28,12 @@ class _BottomNavBarAppState extends State<BottomNavBarApp> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_titles[_currentIndex]),
-        backgroundColor: Colors.purple,
+        backgroundColor: const Color(0xFF21565C), // Deep Blue
       ),
-      body: _screens[_currentIndex],
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _screens,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
@@ -49,10 +48,6 @@ class _BottomNavBarAppState extends State<BottomNavBarApp> {
             label: "Dashboard",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: "Calendar",
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.mood),
             label: "Mood Tracker",
           ),
@@ -61,7 +56,7 @@ class _BottomNavBarAppState extends State<BottomNavBarApp> {
             label: "Settings",
           ),
         ],
-        selectedItemColor: Colors.purple,
+        selectedItemColor: const Color(0xFF21565C), // Deep Blue color
         unselectedItemColor: Colors.grey,
       ),
     );

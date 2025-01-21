@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hifit/calendar/calendar_screen.dart';
-import 'package:hifit/helper/notification_helper.dart';
 import 'package:hifit/mood/moodtracker_screen.dart';
-import 'package:hifit/screens/dashboard_screen.dart';
 import 'package:hifit/screens/setting_screen.dart';
 import 'package:hifit/helper/database_helper.dart';
 import 'package:hifit/fitness/fitness_screen.dart';
@@ -15,19 +12,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
-
   List<Map<String, dynamic>> medications = [];
+  List<Map<String, dynamic>> moodLogs = [];
 
-  final List<Widget> _screens = [
-    DashboardScreen(), // Dashboard screen
-    CalendarScreen(), // Calendar screen
-    MoodTrackerScreen(), // Mood Tracker screen
-    SettingsScreen(), // Settings screen
+  final List<Widget> _otherScreens = [
+    MoodTrackerScreen(),
+    SettingsScreen(),
   ];
 
   final List<String> _titles = [
     "Dashboard",
-    "Calendar",
     "Mood Tracker",
     "Settings",
   ];
@@ -35,7 +29,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchMedications();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    await _fetchMedications();
+    await _fetchMoodLogs();
   }
 
   Future<void> _fetchMedications() async {
@@ -46,23 +45,100 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Widget _dashboardScreen() {
-    return Container(
-      color: const Color(0xFFF5F5F5), // Light background for the body
-      child: Column(
-        children: [
-          Expanded(
-            child: medications.isEmpty
+  Future<void> _fetchMoodLogs() async {
+    final db = DatabaseHelper.instance;
+    final data = await db.fetchMoodLogs();
+    setState(() {
+      moodLogs = data;
+    });
+  }
+
+  Widget _dashboardContent() {
+    return RefreshIndicator(
+      onRefresh: _fetchData,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Mood Logs
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'Mood Log',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF21565C), // Deep Blue
+                ),
+              ),
+            ),
+            moodLogs.isEmpty
+                ? const Center(
+                    child: Text(
+                      'No mood logs found.',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Color(0xFFB5B0B3), // Silver
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: moodLogs.length,
+                    itemBuilder: (context, index) {
+                      final log = moodLogs[index];
+                      return Card(
+                        elevation: 4,
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 16.0),
+                        child: ListTile(
+                          title: Text(
+                            'Mood: ${log['mood']}',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF091819), // Black color
+                            ),
+                          ),
+                          subtitle: Text(
+                            'Energy Level: ${log['energyLevel']}\nLogged at: ${log['timestamp']}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Color(0xFF7D7D7D), // Grey text
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+            const Divider(),
+
+            // Medications
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'Your Medications',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF21565C), // Deep Blue
+                ),
+              ),
+            ),
+            medications.isEmpty
                 ? const Center(
                     child: Text(
                       'No Medications Found',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         color: Color(0xFFB5B0B3), // Silver color
                       ),
                     ),
                   )
                 : ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: medications.length,
                     itemBuilder: (context, index) {
                       final med = medications[index];
@@ -91,7 +167,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             onPressed: () async {
                               await DatabaseHelper.instance
                                   .deleteMedication(med['id']);
-                                  await NotificationHelper.cancelNotification(med['id']);
                               _fetchMedications();
                             },
                           ),
@@ -99,30 +174,51 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                   ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: ElevatedButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => AddMedicationScreen()),
-              ).then((_) => _fetchMedications()),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFCE5100), // Orange color
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 24.0, vertical: 12.0),
-              ),
-              child: const Text(
-                'Add Medication',
-                style: TextStyle(fontSize: 16, color: Colors.white),
+            const Divider(),
+
+            // Action Buttons
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AddMedicationScreen()),
+                    ).then((_) => _fetchMedications()),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFCE5100), // Orange
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 16),
+                    ),
+                    child: const Text(
+                      'Add Medication',
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FitnessRecommendationScreen()),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF21565C), // Deep Blue
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 16),
+                    ),
+                    child: const Text(
+                      'Fitness Recommendations',
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -134,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text(_titles[_currentIndex]),
         backgroundColor: const Color(0xFF21565C), // Deep Blue
       ),
-      body: _currentIndex == 0 ? _dashboardScreen() : _screens[_currentIndex],
+      body: _currentIndex == 0 ? _dashboardContent() : _otherScreens[_currentIndex - 1],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
@@ -149,10 +245,6 @@ class _HomeScreenState extends State<HomeScreen> {
             label: "Dashboard",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: "Calendar",
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.mood),
             label: "Mood Tracker",
           ),
@@ -164,17 +256,6 @@ class _HomeScreenState extends State<HomeScreen> {
         selectedItemColor: const Color(0xFF21565C), // Deep Blue color
         unselectedItemColor: Colors.grey,
       ),
-      floatingActionButton: _currentIndex == 0
-          ? FloatingActionButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => FitnessRecommendationScreen()),
-              ),
-              child: const Icon(Icons.fitness_center),
-              backgroundColor: const Color(0xFFCE5100), // Orange color
-            )
-          : null,
     );
   }
 }

@@ -4,10 +4,6 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-        backgroundColor: const Color(0xFF21565C), // Deep Blue color
-      ),
       body: ListView(
         children: [
           const Padding(
@@ -23,7 +19,8 @@ class SettingsScreen extends StatelessWidget {
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.palette, color: Color(0xFFCE5100)), // Orange
+            leading:
+                const Icon(Icons.palette, color: Color(0xFFCE5100)), // Orange
             title: const Text('Theme'),
             subtitle: const Text('Change app theme'),
             onTap: () {
@@ -55,13 +52,15 @@ class SettingsScreen extends StatelessWidget {
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.notifications, color: Color(0xFFCE5100)), // Orange
+            leading: const Icon(Icons.notifications,
+                color: Color(0xFFCE5100)), // Orange
             title: const Text('Notifications'),
             subtitle: const Text('Manage notification settings'),
             onTap: () {
               // Implement notification settings
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Notification settings coming soon!')),
+                const SnackBar(
+                    content: Text('Notification settings coming soon!')),
               );
             },
           ),
@@ -79,7 +78,8 @@ class SettingsScreen extends StatelessWidget {
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.info, color: Color(0xFF21565C)), // Deep Blue
+            leading:
+                const Icon(Icons.info, color: Color(0xFF21565C)), // Deep Blue
             title: const Text('About'),
             subtitle: const Text('Learn more about the app'),
             onTap: () {
@@ -87,16 +87,19 @@ class SettingsScreen extends StatelessWidget {
                 context: context,
                 applicationName: 'HiFit App',
                 applicationVersion: '1.0.0',
-                applicationIcon: const Icon(Icons.fitness_center, color: Color(0xFFCE5100)),
+                applicationIcon:
+                    const Icon(Icons.fitness_center, color: Color(0xFFCE5100)),
                 children: const [
-                  Text('HiFit is an app designed to help you manage your fitness and medications seamlessly.'),
+                  Text(
+                      'HiFit is an app designed to help you manage your fitness and medications seamlessly.'),
                 ],
               );
             },
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.logout, color: Color(0xFFB5B0B3)), // Silver
+            leading:
+                const Icon(Icons.logout, color: Color(0xFFB5B0B3)), // Silver
             title: const Text('Logout'),
             onTap: () {
               // Implement logout functionality

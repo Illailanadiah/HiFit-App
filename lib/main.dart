@@ -4,7 +4,7 @@ import 'package:hifit/screens/home_screen.dart';
 import 'package:hifit/screens/login_screen.dart';
 
 Future<void> main() async {
-    WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   await NotificationHelper.initialize();
   runApp(const HiFitApp());
 }
@@ -19,8 +19,8 @@ class HiFitApp extends StatelessWidget {
       title: 'HiFit',
       initialRoute: '/',
       routes: {
-        '/': (context) =>  LoginScreen(),
-        '/home': (context) =>  HomeScreen(),
+        '/': (context) => LoginScreen(),
+        '/home': (context) => HomeScreen(),
       },
     );
   }

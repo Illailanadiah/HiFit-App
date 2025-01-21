@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:hifit/screens/home_screen.dart';
 import 'package:lottie/lottie.dart';
@@ -31,11 +32,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
     return Material(
       color: Theme.of(context).appBarTheme.backgroundColor ?? Colors.white,
       child: Center(
-        child: Container(
-          child: Center(
-            child: LottieBuilder.asset("assets/animation.success_animation.json"),
-          ),
-        ),
+        child: LottieBuilder.asset("assets/animation/success_animation.json"),
       ),
     );
   }
