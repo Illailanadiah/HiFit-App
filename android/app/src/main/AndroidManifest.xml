@@ -46,6 +46,9 @@
     <meta-data
     android:name="com.google.firebase.auth.api_key"
     android:value="AIzaSyDHCrHfwEDMx1ZLePHtQsnWHdB49Jv1Fqc" />
+    <meta-data
+        android:name="com.google.firebase.messaging.default_notification_channel_id"
+        android:value="default_channel" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

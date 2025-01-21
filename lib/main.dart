@@ -4,11 +4,10 @@ import 'package:hifit/screens/home_screen.dart';
 import 'package:hifit/screens/login_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationHelper.initialize();
-    await Permission.notification.request();
+  await Permission.notification.request();
 
   runApp(const HiFitApp());
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hifit/mood/moodtracker_screen.dart';
 import 'package:hifit/screens/setting_screen.dart';
 import 'package:hifit/helper/database_helper.dart';
-import 'package:hifit/fitness/fitness_screen.dart';
 import 'package:hifit/medications/add_medication.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -221,7 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => FitnessRecommendationScreen()),
+                          builder: (context) => MoodTrackerScreen()),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF21565C), // Deep Blue
@@ -229,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           horizontal: 20, vertical: 16),
                     ),
                     child: const Text(
-                      'Fitness Recommendations',
+                      'Mode Tracker',
                       style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),
@@ -264,8 +263,8 @@ class _HomeScreenState extends State<HomeScreen> {
             label: "Dashboard",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.mood),
-            label: "Mood Tracker",
+            icon: Icon(Icons.fitness_center),
+            label: "Fitness",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
