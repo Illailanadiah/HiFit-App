@@ -38,9 +38,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <meta-data
-    android:name="com.google.android.gms.analytics.globalConfigResource"
-    android:resource="@xml/global_tracker" />
+        
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
@@ -53,4 +51,8 @@
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
+
+<meta-data
+    android:name="com.google.android.gms.analytics.globalConfigResource"
+    android:resource="@xml/global_tracker" />
 </manifest>
