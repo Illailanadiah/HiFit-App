@@ -55,6 +55,14 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future<void> _deleteMoodLog(int id) async {
+    await DatabaseHelper.instance.deleteMoodLog(id);
+    await _fetchMoodLogs();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Mood log deleted.')),
+    );
+  }
+
   Future<void> _deleteMedication(int id, String name) async {
     await DatabaseHelper.instance.deleteMedication(id);
     await _fetchMedications();
@@ -122,6 +130,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               fontSize: 16,
                               color: Color(0xFF21565C), // Deep Blue
                             ),
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () async {
+                              await _deleteMoodLog(log['id']);
+                            },
                           ),
                         ),
                       );
