@@ -64,11 +64,13 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add New Medication')),
+      appBar: AppBar(
+        title: const Text('Add New Medication'),
+        backgroundColor: const Color(0xFF48a9b6), // Teal Blue
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -77,7 +79,11 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
             children: [
               const Text(
                 'Medicine Name *',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF21565C), // Deep Blue
+                ),
               ),
               TextField(
                 controller: nameController,
@@ -89,7 +95,11 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
               const SizedBox(height: 16),
               const Text(
                 'Dosage in mg *',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF21565C), // Deep Blue
+                ),
               ),
               TextField(
                 controller: dosageController,
@@ -102,7 +112,11 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
               const SizedBox(height: 16),
               const Text(
                 'Medication Type *',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF21565C), // Deep Blue
+                ),
               ),
               DropdownButtonFormField<String>(
                 value: selectedType,
@@ -124,7 +138,11 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
               const SizedBox(height: 16),
               const Text(
                 'Interval (Hours) *',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF21565C), // Deep Blue
+                ),
               ),
               TextField(
                 controller: intervalController,
@@ -137,7 +155,11 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
               const SizedBox(height: 16),
               const Text(
                 'Starting Time *',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF21565C), // Deep Blue
+                ),
               ),
               ElevatedButton(
                 onPressed: () => _selectTime(context),
@@ -147,7 +169,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                       : 'Selected Time: ${selectedTime!.format(context)}',
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFCE5100),
+                  backgroundColor: const Color(0xFFfdb3d5), // Pink Blush
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                 ),
               ),
@@ -156,7 +178,7 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                 child: ElevatedButton(
                   onPressed: _saveMedication,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+                    backgroundColor: const Color(0xFF48a9b6), // Teal Blue
                     padding: const EdgeInsets.symmetric(
                       horizontal: 40.0,
                       vertical: 18.0,

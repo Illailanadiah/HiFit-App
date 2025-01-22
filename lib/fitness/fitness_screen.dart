@@ -9,7 +9,6 @@ class FitnessRecommendationScreen extends StatelessWidget {
     'Moderate Cardio': 'https://www.youtube.com/watch?v=5YJkvUXIGi0',
   };
 
-  /// Fitness steps for recommendations
   final Map<String, List<String>> fitnessSteps = {
     'Light Yoga': [
       'Step 1: Begin with deep breathing exercises.',
@@ -28,7 +27,6 @@ class FitnessRecommendationScreen extends StatelessWidget {
     ],
   };
 
-  /// Generate fitness recommendation based on medication and mood data
   String generateRecommendation(
       Map<String, dynamic> medication, Map<String, dynamic>? moodLog) {
     final String type = medication['type'];
@@ -52,7 +50,6 @@ class FitnessRecommendationScreen extends StatelessWidget {
     return 'Custom workouts based on your mood and medication type.';
   }
 
-  /// Fetch the latest mood log
   Future<Map<String, dynamic>?> fetchLatestMoodLog() async {
     final db = DatabaseHelper.instance;
     final moodLogs = await db.fetchMoodLogs();
@@ -65,14 +62,12 @@ class FitnessRecommendationScreen extends StatelessWidget {
       if (await canLaunchUrl(uri)) {
         await launchUrl(
           uri,
-          mode: LaunchMode.externalApplication, // Ensures it opens in the external browser
+          mode: LaunchMode.externalApplication,
         );
       } else {
         throw 'Could not launch $url';
       }
     } catch (e) {
-      print('Error launching URL: $e');
-      // Show an error dialog to the user
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -94,12 +89,12 @@ class FitnessRecommendationScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Fitness Recommendations'),
-        backgroundColor: const Color(0xFF21565C), // Deep Blue
+        backgroundColor: const Color(0xFF48a9b6), // Teal Blue
       ),
-      body: FutureBuilder<Map<String, dynamic>?>(
+      body: FutureBuilder<Map<String, dynamic>?>(  
         future: fetchLatestMoodLog(),
         builder: (context, moodSnapshot) {
-          return FutureBuilder<List<Map<String, dynamic>>>(
+          return FutureBuilder<List<Map<String, dynamic>>>(  
             future: DatabaseHelper.instance.fetchMedications(),
             builder: (context, medSnapshot) {
               if (medSnapshot.connectionState == ConnectionState.waiting ||
@@ -110,7 +105,7 @@ class FitnessRecommendationScreen extends StatelessWidget {
                 return const Center(
                   child: Text(
                     'No medications found to base recommendations on.',
-                    style: TextStyle(fontSize: 16, color: Color(0xFF7D7D7D)),
+                    style: TextStyle(fontSize: 16, color: Color(0xFF7D7D7D)), // Grey text
                   ),
                 );
               }
@@ -134,12 +129,15 @@ class FitnessRecommendationScreen extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          color: Color(0xFF091819), // Black
                         ),
                       ),
                       subtitle: Text(
                         recommendation,
                         style: const TextStyle(
-                            fontSize: 16, color: Color(0xFF7D7D7D)),
+                          fontSize: 16,
+                          color: Color(0xFF7D7D7D), // Grey
+                        ),
                       ),
                       children: [
                         if (fitnessSteps.containsKey(recommendation)) ...[
@@ -188,7 +186,7 @@ class FitnessRecommendationScreen extends StatelessWidget {
                           icon: const Icon(Icons.link),
                           label: const Text('Watch Video'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFCE5100),
+                            backgroundColor: const Color(0xFFfdb3d5), // Pink Blush
                           ),
                         ),
                       ],

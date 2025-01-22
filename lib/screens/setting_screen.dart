@@ -23,14 +23,14 @@ class SettingsScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF21565C), // Deep Blue color
+                color: Color(0xFF48a9b6), // Teal Blue
               ),
             ),
           ),
           const Divider(),
           ListTile(
             leading:
-                const Icon(Icons.palette, color: Color(0xFFCE5100)), // Orange
+                const Icon(Icons.palette, color: Color(0xFFfdb3d5)), // Pink Blush
             title: const Text('Theme'),
             subtitle: const Text('Change app theme'),
             onTap: () {
@@ -45,14 +45,20 @@ class SettingsScreen extends StatelessWidget {
                         // Implement Light Theme
                         Navigator.pop(context);
                       },
-                      child: const Text('Light'),
+                      child: const Text(
+                        'Light',
+                        style: TextStyle(color: Color(0xFF48a9b6)), // Teal Blue
+                      ),
                     ),
                     TextButton(
                       onPressed: () {
                         // Implement Dark Theme
                         Navigator.pop(context);
                       },
-                      child: const Text('Dark'),
+                      child: const Text(
+                        'Dark',
+                        style: TextStyle(color: Color(0xFFfdb3d5)), // Pink Blush
+                      ),
                     ),
                   ],
                 ),
@@ -62,7 +68,7 @@ class SettingsScreen extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.notifications,
-                color: Color(0xFFCE5100)), // Orange
+                color: Color(0xFFfdb3d5)), // Pink Blush
             title: const Text('Notifications'),
             subtitle: const Text('Manage notification settings'),
             onTap: () {
@@ -86,7 +92,7 @@ class SettingsScreen extends StatelessWidget {
           const Divider(),
           ListTile(
             leading:
-                const Icon(Icons.info, color: Color(0xFF21565C)), // Deep Blue
+                const Icon(Icons.info, color: Color(0xFF48a9b6)), // Teal Blue
             title: const Text('About'),
             subtitle: const Text('Learn more about the app'),
             onTap: () {
@@ -95,7 +101,7 @@ class SettingsScreen extends StatelessWidget {
                 applicationName: 'HiFit App',
                 applicationVersion: '1.0.0',
                 applicationIcon:
-                    const Icon(Icons.fitness_center, color: Color(0xFFCE5100)),
+                    const Icon(Icons.fitness_center, color: Color(0xFF77dbe8)),
                 children: const [
                   Text(
                       'HiFit is an app designed to help you manage your fitness and medications seamlessly.'),
@@ -105,8 +111,7 @@ class SettingsScreen extends StatelessWidget {
           ),
           const Divider(),
           ListTile(
-            leading:
-                const Icon(Icons.logout, color: Color(0xFFB5B0B3)), // Silver
+            leading: const Icon(Icons.logout, color: Color(0xFF77dbe8)), // Sky Blue
             title: const Text('Logout'),
             onTap: () {
               showDialog(
@@ -119,14 +124,20 @@ class SettingsScreen extends StatelessWidget {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: const Text('Cancel'),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: Color(0xFF48a9b6)), // Teal Blue
+                      ),
                     ),
                     TextButton(
                       onPressed: () async {
                         Navigator.pop(context); // Close the dialog
                         await _logout(context); // Call logout logic
                       },
-                      child: const Text('Logout'),
+                      child: const Text(
+                        'Logout',
+                        style: TextStyle(color: Color(0xFFfdb3d5)), // Pink Blush
+                      ),
                     ),
                   ],
                 ),

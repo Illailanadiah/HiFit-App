@@ -5,6 +5,7 @@ import 'package:hifit/screens/setting_screen.dart';
 import 'package:hifit/helper/database_helper.dart';
 import 'package:hifit/helper/notification_helper.dart';
 import 'package:hifit/medications/add_medication.dart';
+import 'package:hifit/screens/notification_view_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -54,24 +55,12 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Future<void> _scheduleMedicationNotification(Map<String, dynamic> med) async {
-    final int id = med['id'];
-    final String name = med['name'];
-    final DateTime scheduledTime = DateTime.parse(med['time']); // Ensure time is in correct format
-
-    await NotificationHelper.scheduleNotification(
-      id,
-      'Time to Take Your Medicine',
-      'Don\'t forget to take $name!',
-      scheduledTime,
-    );
-  }
-
-  Future<void> _dashboardNotification(String title, String message) async {
-    await NotificationHelper.showInstantNotification(
-      0,
-      title,
-      message,
+  Future<void> _deleteMedication(int id, String name) async {
+    await DatabaseHelper.instance.deleteMedication(id);
+    await _fetchMedications();
+    await NotificationHelper.cancelNotification(id);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('$name has been marked as taken and removed.')),
     );
   }
 
@@ -91,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF21565C), // Deep Blue
+                  color: Color(0xFF48a9b6), // Teal Blue
                 ),
               ),
             ),
@@ -101,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       'No mood logs found.',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Color(0xFFB5B0B3), // Silver
+                        color: Color(0xFFfdb3d5), // Pink Blush
                       ),
                     ),
                   )
@@ -112,6 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemBuilder: (context, index) {
                       final log = moodLogs[index];
                       return Card(
+                        color: const Color(0xFF77dbe8), // Sky Blue
                         elevation: 4,
                         margin: const EdgeInsets.symmetric(
                           vertical: 8.0,
@@ -123,32 +113,15 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF091819), // Black color
+                              color: Colors.white, // White Text
                             ),
                           ),
                           subtitle: Text(
                             'Energy Level: ${log['energyLevel']}\nLogged at: ${log['timestamp']}',
                             style: const TextStyle(
                               fontSize: 16,
-                              color: Color(0xFF7D7D7D), // Grey text
+                              color: Color(0xFF21565C), // Deep Blue
                             ),
-                          ),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () async {
-                              await DatabaseHelper.instance
-                                  .deleteMoodLog(log['id']);
-                              await _fetchMoodLogs();
-                              await _dashboardNotification(
-                                'Mood Log Deleted',
-                                'You removed a mood log entry.',
-                              );
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Mood log deleted'),
-                                ),
-                              );
-                            },
                           ),
                         ),
                       );
@@ -164,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF21565C), // Deep Blue
+                  color: Color(0xFF48a9b6), // Teal Blue
                 ),
               ),
             ),
@@ -174,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       'No Medications Found',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Color(0xFFB5B0B3), // Silver color
+                        color: Color(0xFFfdb3d5), // Pink Blush
                       ),
                     ),
                   )
@@ -185,6 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemBuilder: (context, index) {
                       final med = medications[index];
                       return Card(
+                        color: const Color(0xFF77dbe8), // Sky Blue
                         elevation: 4,
                         margin: const EdgeInsets.symmetric(
                           vertical: 8.0,
@@ -196,32 +170,28 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF091819), // Black color
+                              color: Colors.white, // White Text
                             ),
                           ),
                           subtitle: Text(
                             'Dosage: ${med['dosage']} - ${med['time']}',
                             style: const TextStyle(
                               fontSize: 16,
-                              color: Color(0xFF7D7D7D), // Grey text
+                              color: Color(0xFF21565C), // Deep Blue
                             ),
                           ),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () async {
-                              await DatabaseHelper.instance
-                                  .deleteMedication(med['id']);
-                              await _fetchMedications();
-                              await _dashboardNotification(
-                                'Medication Deleted',
-                                'You removed ${med['name']} from your medications.',
-                              );
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Medication deleted'),
-                                ),
-                              );
+                          trailing: PopupMenuButton<String>(
+                            onSelected: (value) {
+                              if (value == 'Mark as Taken') {
+                                _deleteMedication(med['id'], med['name']);
+                              }
                             },
+                            itemBuilder: (context) => [
+                              const PopupMenuItem(
+                                value: 'Mark as Taken',
+                                child: Text('Mark as Taken'),
+                              ),
+                            ],
                           ),
                         ),
                       );
@@ -244,15 +214,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                       if (result != null) {
                         await _fetchMedications();
-                        await _scheduleMedicationNotification(result);
-                        await _dashboardNotification(
-                          'New Medication Added',
-                          '${result['name']} has been added to your list.',
-                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFCE5100), // Orange
+                      backgroundColor: const Color(0xFFfdb3d5), // Pink Blush
                       padding: const EdgeInsets.symmetric(
                         horizontal: 20,
                         vertical: 16,
@@ -268,11 +233,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => FitnessRecommendationScreen()),
+                            builder: (context) =>
+                                FitnessRecommendationScreen()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF21565C), // Deep Blue
+                      backgroundColor: const Color(0xFF48a9b6), // Teal Blue
                       padding: const EdgeInsets.symmetric(
                         horizontal: 20,
                         vertical: 16,
@@ -297,7 +263,19 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_titles[_currentIndex]),
-        backgroundColor: const Color(0xFF21565C), // Deep Blue
+        backgroundColor: const Color(0xFF48a9b6), // Teal Blue
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const NotificationViewScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: _currentIndex == 0 ? _dashboardContent() : _otherScreens[_currentIndex - 1],
       bottomNavigationBar: BottomNavigationBar(
@@ -322,8 +300,8 @@ class _HomeScreenState extends State<HomeScreen> {
             label: "Settings",
           ),
         ],
-        selectedItemColor: const Color(0xFF21565C), // Deep Blue color
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: const Color(0xFF48a9b6), // Teal Blue color
+        unselectedItemColor: Color(0xFFfdb3d5), // Pink Blush color
       ),
     );
   }

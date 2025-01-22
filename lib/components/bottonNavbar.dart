@@ -13,13 +13,13 @@ class _BottomNavBarAppState extends State<BottomNavBarApp> {
 
   final List<Widget> _screens = [
     HomeScreen(), // Dashboard screen
-    MoodTrackerScreen(), // Fitness Recommendation screen
+    MoodTrackerScreen(), // Mood Tracker screen
     SettingsScreen(), // Settings screen
   ];
 
   final List<String> _titles = [
     "Dashboard",
-    "Fitness",
+    "Mood Tracker",
     "Settings",
   ];
 
@@ -27,8 +27,12 @@ class _BottomNavBarAppState extends State<BottomNavBarApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_titles[_currentIndex]),
-        backgroundColor: const Color(0xFF21565C), // Deep Blue
+        title: Text(
+          _titles[_currentIndex],
+          style: const TextStyle(color: Colors.white),
+        ),
+        backgroundColor: const Color(0xFF48a9b6), // Teal Blue
+        elevation: 0,
       ),
       body: IndexedStack(
         index: _currentIndex,
@@ -56,8 +60,9 @@ class _BottomNavBarAppState extends State<BottomNavBarApp> {
             label: "Settings",
           ),
         ],
-        selectedItemColor: const Color(0xFF21565C), // Deep Blue color
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: const Color(0xFF48a9b6), // Teal Blue
+        unselectedItemColor: const Color(0xFFB5B0B3), // Silver
+        backgroundColor: const Color(0xFFFFFFFF), // White
       ),
     );
   }

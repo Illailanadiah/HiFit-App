@@ -35,20 +35,23 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
-          color: Colors.white, // Background color
+          color: Color.fromRGBO(253, 179, 213, 1), // Pink Blush background
         ),
         child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildWelcomeText(context),
-              const SizedBox(height: 20),
-              Lottie.asset(
-                'assets/animation/fingerprint.json',
-                height: 150,
-              ),
-              _buildLoginButton(context),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildWelcomeText(context),
+                const SizedBox(height: 20),
+                Lottie.asset(
+                  'assets/animation/fingerprint.json',
+                  height: 150,
+                ),
+                const SizedBox(height: 20),
+                _buildLoginButton(context),
+              ],
+            ),
           ),
         ),
       ),
@@ -62,7 +65,7 @@ class LoginScreen extends StatelessWidget {
         Text(
           'Welcome to',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: Color(0xFF21565C),
+                color: const Color.fromRGBO(72, 169, 182, 1), // Teal Blue
                 fontWeight: FontWeight.bold,
                 fontSize: 30,
               ),
@@ -70,15 +73,16 @@ class LoginScreen extends StatelessWidget {
         Text(
           'HiFit',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: Color(0xFF21565C),
+                color: const Color.fromRGBO(72, 169, 182, 1), // Teal Blue
                 fontWeight: FontWeight.bold,
                 fontSize: 45,
               ),
         ),
+        const SizedBox(height: 20),
         Lottie.asset(
-                'assets/animation/fitness.json',
-                height: 300,
-              ),
+          'assets/animation/fitness.json',
+          height: 300,
+        ),
       ],
     );
   }
@@ -88,18 +92,20 @@ class LoginScreen extends StatelessWidget {
     return ElevatedButton.icon(
       onPressed: () => _authenticate(context),
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white, // Button background color
-        iconColor: const Color(0xFF21565C), // Icon and text color
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        backgroundColor: const Color.fromRGBO(119, 219, 232, 1), // Sky Blue
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
       ),
-      icon: const Icon(Icons.fingerprint),
+      icon: const Icon(
+        Icons.fingerprint,
+        color: Colors.white, // White icon color
+      ),
       label: const Text(
         "Login using Fingerprint",
         style: TextStyle(
-          color: Color(0xFF21565C),
+          color: Colors.white, // White text color
           fontSize: 16,
         ),
       ),
