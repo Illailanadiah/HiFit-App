@@ -21,7 +21,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 4, // Incremented version for new schema updates
+      version: 5, // Incremented version for new schema updates
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -55,22 +55,21 @@ class DatabaseHelper {
         title TEXT NOT NULL,
         body TEXT NOT NULL,
         scheduledTime TEXT NOT NULL,
-        status TEXT NOT NULL DEFAULT 'pending'
+        status TEXT NOT NULL DEFAULT 'pending',
+        priority TEXT DEFAULT 'normal'
       )
     ''');
+
+    print('Database created with version $version.');
   }
 
   /// Handle database upgrades
   Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
+    print('Upgrading database from version $oldVersion to $newVersion...');
     if (oldVersion < 2) {
-      await db.execute('''
-        ALTER TABLE medications ADD COLUMN type TEXT NOT NULL DEFAULT 'Bottle';
-      ''');
-      await db.execute('''
-        ALTER TABLE medications ADD COLUMN interval INTEGER NOT NULL DEFAULT 24;
-      ''');
+      await db.execute('ALTER TABLE medications ADD COLUMN type TEXT NOT NULL DEFAULT "Bottle";');
+      await db.execute('ALTER TABLE medications ADD COLUMN interval INTEGER NOT NULL DEFAULT 24;');
     }
-
     if (oldVersion < 3) {
       await db.execute('''
         CREATE TABLE IF NOT EXISTS moodLogs (
@@ -81,7 +80,6 @@ class DatabaseHelper {
         )
       ''');
     }
-
     if (oldVersion < 4) {
       await db.execute('''
         CREATE TABLE IF NOT EXISTS notifications (
@@ -89,10 +87,15 @@ class DatabaseHelper {
           title TEXT NOT NULL,
           body TEXT NOT NULL,
           scheduledTime TEXT NOT NULL,
-          status TEXT NOT NULL DEFAULT 'pending'
+          status TEXT NOT NULL DEFAULT "pending"
         )
       ''');
     }
+    if (oldVersion < 5) {
+      await db.execute('ALTER TABLE notifications ADD COLUMN priority TEXT DEFAULT "normal";');
+    }
+
+    print('Database upgrade complete.');
   }
 
   /// Add a new medication
@@ -104,7 +107,7 @@ class DatabaseHelper {
   /// Fetch all medications ordered by time
   Future<List<Map<String, dynamic>>> fetchMedications() async {
     final db = await instance.database;
-    return await db.query('medications', orderBy: 'time ASC');
+    return await _safeQuery(() => db.query('medications', orderBy: 'time ASC'));
   }
 
   /// Delete a medication by ID
@@ -122,7 +125,7 @@ class DatabaseHelper {
   /// Fetch all mood logs ordered by timestamp
   Future<List<Map<String, dynamic>>> fetchMoodLogs() async {
     final db = await instance.database;
-    return await db.query('moodLogs', orderBy: 'timestamp DESC');
+    return await _safeQuery(() => db.query('moodLogs', orderBy: 'timestamp DESC'));
   }
 
   /// Delete a mood log by ID
@@ -140,7 +143,7 @@ class DatabaseHelper {
   /// Fetch all pending notifications
   Future<List<Map<String, dynamic>>> fetchPendingNotifications() async {
     final db = await instance.database;
-    return await db.query('notifications', where: 'status = ?', whereArgs: ['pending']);
+    return await _safeQuery(() => db.query('notifications', where: 'status = ?', whereArgs: ['pending']));
   }
 
   /// Update notification status
@@ -152,6 +155,16 @@ class DatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
+  }
+
+  /// Execute a query safely with error handling
+  Future<List<Map<String, dynamic>>> _safeQuery(Future<List<Map<String, dynamic>>> Function() query) async {
+    try {
+      return await query();
+    } catch (e) {
+      print('Database query error: $e');
+      return [];
+    }
   }
 
   /// Clear a specific table

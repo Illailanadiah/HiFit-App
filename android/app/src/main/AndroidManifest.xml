@@ -10,7 +10,7 @@
 
 
     <application
-        android:label="hifit"
+        android:label="HiFit"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

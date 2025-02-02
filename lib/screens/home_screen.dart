@@ -72,6 +72,31 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Future<void> _showMedicationDetails(Map<String, dynamic> med) async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Medication Details: ${med['name']}'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Dosage: ${med['dosage']} mg'),
+            Text('Type: ${med['type']}'),
+            Text('Interval: ${med['interval']} hours'),
+            Text('Next Intake: ${med['time']}'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _dashboardContent() {
     return RefreshIndicator(
       onRefresh: _fetchData,
@@ -194,6 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               color: Color(0xFF21565C), // Deep Blue
                             ),
                           ),
+                          onTap: () => _showMedicationDetails(med),
                           trailing: PopupMenuButton<String>(
                             onSelected: (value) {
                               if (value == 'Mark as Taken') {
@@ -254,7 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF48a9b6), // Teal Blue
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
+                        horizontal: 16,
                         vertical: 16,
                       ),
                     ),
